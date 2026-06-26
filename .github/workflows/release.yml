@@ -1,0 +1,79 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version without v prefix, for example 0.1.0'
+        required: true
+        default: '0.1.0'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: version
+        shell: pwsh
+        run: |
+          if ('${{ github.event_name }}' -eq 'workflow_dispatch') {
+            $version = '${{ github.event.inputs.version }}'
+          } else {
+            $version = '${{ github.ref_name }}'.TrimStart('v')
+          }
+          "version=$version" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install WiX
+        run: dotnet tool install --global wix --version 5.0.2
+
+      - name: Install Inno Setup
+        run: winget install --id JRSoftware.InnoSetup -e --source winget --accept-source-agreements --accept-package-agreements
+
+      - name: Publish app
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts/publish | Out-Null
+          dotnet publish DecokeeTray/DecokeeTray.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishSingleFile=true `
+            -p:IncludeNativeLibrariesForSelfExtract=true `
+            -p:EnableCompressionInSingleFile=true `
+            -p:Version=${{ steps.version.outputs.version }} `
+            -o artifacts/publish
+
+      - name: Build MSI
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force artifacts/installers | Out-Null
+          wix build installer/wix/DecokeeTray.wxs -d ProductVersion=${{ steps.version.outputs.version }} -arch x64 -out artifacts/installers/DecokeeTray-${{ steps.version.outputs.version }}-win-x64.msi
+
+      - name: Build EXE installer
+        shell: pwsh
+        env:
+          APP_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          & "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" installer/inno/DecokeeTray.iss
+
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          files: |
+            artifacts/installers/DecokeeTray-${{ steps.version.outputs.version }}-win-x64.msi
+            artifacts/installers/DecokeeTray-${{ steps.version.outputs.version }}-setup.exe

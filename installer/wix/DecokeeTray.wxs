@@ -1,0 +1,46 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="Decokee Quake Tray"
+    Manufacturer="Decokee Tray Contributors"
+    Version="$(var.ProductVersion)"
+    UpgradeCode="2F66877F-1473-48AF-B63C-28923F5836D7"
+    Scope="perUser">
+    <Property Id="ProductVersion" Value="0.1.0" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Decokee Quake Tray is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="MainFeature" Title="Decokee Quake Tray" Level="1">
+      <ComponentGroupRef Id="AppComponents" />
+    </Feature>
+
+    <StandardDirectory Id="LocalAppDataFolder">
+      <Directory Id="ProgramsFolder" Name="Programs">
+        <Directory Id="InstallFolder" Name="DecokeeTray" />
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="StartupFolder" />
+    <StandardDirectory Id="ProgramMenuFolder" />
+
+    <ComponentGroup Id="AppComponents" Directory="InstallFolder">
+      <Component Id="AppExecutable" Guid="35A77E49-2F54-48C7-9E33-59371413180E">
+        <File Id="DecokeeTrayExe" Source="artifacts\publish\decokee-tray.exe" KeyPath="yes">
+          <Shortcut
+            Id="StartupShortcut"
+            Directory="StartupFolder"
+            Name="Decokee Quake Tray"
+            Description="Start Decokee Quake Tray at sign-in"
+            WorkingDirectory="InstallFolder"
+            Advertise="no" />
+          <Shortcut
+            Id="ProgramsShortcut"
+            Directory="ProgramMenuFolder"
+            Name="Decokee Quake Tray"
+            Description="Launch Decokee Quake Tray"
+            WorkingDirectory="InstallFolder"
+            Advertise="no" />
+        </File>
+      </Component>
+    </ComponentGroup>
+  </Package>
+</Wix>

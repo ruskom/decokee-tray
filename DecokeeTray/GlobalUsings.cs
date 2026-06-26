@@ -1,0 +1,17 @@
+global using System.Drawing;
+global using System.Drawing.Drawing2D;
+global using System.Globalization;
+global using System.Runtime.InteropServices;
+global using System.Text.Json;
+global using System.Windows.Forms;
+global using DecokeeTray.Hardware;
+global using DecokeeTray.Interop;
+global using DecokeeTray.Logging;
+global using DecokeeTray.Power;
+global using DecokeeTray.Services;
+global using DecokeeTray.State;
+global using DecokeeTray.UI;
+global using DecokeeTray.Windows;
+global using HidSharp;
+global using Interop.UIAutomationClient;
+global using Microsoft.Win32;
