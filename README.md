@@ -6,7 +6,7 @@ The goal is to replace the vendor always-on companion app with a minimal,
 local-first toolchain that keeps the device display alive and exposes useful
 hardware controls without requiring administrator privileges or network access.
 
-![Decokee Quake Tray controls](assets/tray-controls.svg)
+![Decokee Quake Tray controls](assets/tray-controls.png)
 
 ## Applications
 
