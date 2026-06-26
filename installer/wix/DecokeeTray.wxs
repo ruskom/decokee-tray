@@ -5,7 +5,6 @@
     Version="$(var.ProductVersion)"
     UpgradeCode="2F66877F-1473-48AF-B63C-28923F5836D7"
     Scope="perUser">
-    <Property Id="ProductVersion" Value="0.1.0" />
     <MajorUpgrade DowngradeErrorMessage="A newer version of Decokee Quake Tray is already installed." />
     <MediaTemplate EmbedCab="yes" />
 
