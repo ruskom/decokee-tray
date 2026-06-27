@@ -1,29 +1,26 @@
-# Decokee Quake Tools
+# Decokee Quake Tray
 
-Small Windows utilities for the Decokee Quake desktop device.
+A small Windows tray companion for the Decokee Quake desktop device.
 
-The goal is to replace the vendor always-on companion app with a minimal,
-local-first toolchain that keeps the device display alive and exposes useful
-hardware controls without requiring administrator privileges or network access.
+The app replaces the vendor always-on companion software for day-to-day use. It
+keeps the Quake display alive, exposes useful hardware controls, and adds simple
+desktop window switching through the device knob without requiring
+administrator privileges or network access.
 
 ![Decokee Quake Tray controls](assets/tray-controls.png)
 
-## Applications
-
-| Path | Description |
-|---|---|
-| `apps/decokee-keeper/` | Command-line HID probe and keeper utility |
-| `apps/decokee-tray/` | Windows tray companion app |
-| `wiki/` | Project notes and hardware research |
-
 ## Features
 
-- HID device discovery and report logging.
 - Display keepalive for the Quake transparent monitor mode.
-- Screen luminance and knob RGB matrix controls.
+- Screen luminance control.
+- Knob RGB matrix brightness and color control.
 - Rotary knob window switching on the Quake display.
 - Optional knob modes for Quake luminance and system volume.
-- Button actions for focusing or moving windows to the Quake display.
+- Button actions for focusing the current Quake window or moving the active
+  window to the Quake display.
+- Automatic pause of keepalive while the primary display is off.
+- Light and dark mode aware tray popup.
+- Single-instance guard.
 - No internet communication.
 - No administrator privilege requirement.
 - No vendor runtime dependency.
@@ -31,42 +28,51 @@ hardware controls without requiring administrator privileges or network access.
 ## Requirements
 
 - Windows
-- .NET 10 SDK
 - Decokee Quake device connected over USB
+- .NET 10 SDK, only when building from source
 
-## Build
+## Install
 
-```bash
-dotnet build Decokee.slnx
+Download the latest installer from the GitHub Releases page:
+
+- `DecokeeTray-<version>-setup.exe`
+- `DecokeeTray-<version>-win-x64.msi`
+
+Both installers are per-user installers. They install the app under:
+
+```text
+%LOCALAPPDATA%\Programs\DecokeeTray
 ```
 
-## Tray App
+The installer also adds a startup shortcut for the current Windows user.
 
-From Windows PowerShell:
+## Build From Source
 
 ```powershell
-dotnet run --project .\apps\decokee-tray
+dotnet build .\DecokeeTray.slnx
+dotnet run --project .\DecokeeTray
 ```
 
-The app starts as a tray icon. Left click opens the settings popup. Right click
-opens a minimal context menu with keepalive and exit actions.
+## Release Build
 
-By default, the app:
+The repository includes a GitHub Actions workflow that builds both MSI and EXE
+installers for tagged releases.
 
-- starts the display keepalive loop,
-- applies the configured screen luminance,
-- disables the pulsing A3 knob LED,
-- applies the configured QMK RGB matrix color and brightness.
-
-## Keeper CLI
+Create a tag and push it:
 
 ```powershell
-dotnet run --project .\apps\decokee-keeper -- list
-dotnet run --project .\apps\decokee-keeper -- listen --count 10
-dotnet run --project .\apps\decokee-keeper -- keepalive --path-contains mi_02
+git tag v0.1.0
+git push origin v0.1.0
 ```
 
-See `apps/decokee-keeper/README.md` for lower-level probing commands.
+The workflow publishes:
+
+- `DecokeeTray-<version>-setup.exe`
+- `DecokeeTray-<version>-win-x64.msi`
+
+## Notes
+
+This is an independent community utility. It is not affiliated with Decokee.
 
 ## License
 
